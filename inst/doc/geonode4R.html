@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>geonode4R - R Interface to GeoNode REST API</title>
+<style type="text/css">
+/**
+ * Prism.s theme ported from highlight.js's xcode style
+ */
+pre code {
+  padding: 1em;
+}
+.token.comment {
+  color: #007400;
+}
+.token.punctuation {
+  color: #999;
+}
+.token.tag,
+.token.selector {
+  color: #aa0d91;
+}
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol {
+  color: #1c00cf;
+}
+.token.property,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin {
+  color: #c41a16;
+}
+.token.inserted {
+  background-color: #ccffd8;
+}
+.token.deleted {
+  background-color: #ffebe9;
+}
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #9a6e3a;
+}
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #836c28;
+}
+.token.function,
+.token.class-name {
+  color: #DD4A68;
+}
+.token.regex,
+.token.important,
+.token.variable {
+  color: #5c2699;
+}
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+</style>
+<style type="text/css">
+body {
+  font-family: sans-serif;
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+body, .footnotes, code { font-size: .9em; }
+li li { font-size: .95em; }
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+pre, img { max-width: 100%; }
+pre, pre:hover {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+pre code {
+  display: block;
+  overflow-x: auto;
+}
+code { font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace; }
+:not(pre) > code, code[class] { background-color: #F8F8F8; }
+code.language-undefined, pre > code:not([class]) {
+  background-color: inherit;
+  border: 1px solid #eee;
+}
+table {
+  margin: auto;
+  border-top: 1px solid #666;
+}
+table thead th { border-bottom: 1px solid #ddd; }
+th, td { padding: 5px; }
+thead, tfoot, tr:nth-child(even) { background: #eee; }
+blockquote {
+  color: #666;
+  margin: 0;
+  padding-left: 1em;
+  border-left: 0.5em solid #eee;
+}
+hr, .footnotes::before { border: 1px dashed #ddd; }
+.frontmatter { text-align: center; }
+#TOC .numbered li { list-style: none; }
+#TOC .numbered { padding-left: 0; }
+#TOC .numbered ul { padding-left: 1em; }
+table, .body h2 { border-bottom: 1px solid #666; }
+.body .appendix, .appendix ~ h2 { border-bottom-style: dashed; }
+.footnote-ref a::before { content: "["; }
+.footnote-ref a::after { content: "]"; }
+section.footnotes::before {
+  content: "";
+  display: block;
+  max-width: 20em;
+}
+
+@media print {
+  body {
+    font-size: 12pt;
+    max-width: 100%;
+  }
+  tr, img { page-break-inside: avoid; }
+}
+@media only screen and (min-width: 992px) {
+  pre { white-space: pre; }
+}
+</style>
+</head>
+<body>
+<div class="frontmatter">
+<div class="title"><h1>geonode4R - R Interface to GeoNode REST API</h1></div>
+<div class="author"><h2></h2></div>
+<div class="date"><h3></h3></div>
+</div>
+<div class="body">
+<p>R Interface to GeoNode REST API – Allows to perform programmatically from R</p>
+<p><code>geonode4R</code> is a new package to perform operations of the GeoNode REST API. It supports CRUD operations (Create, Read, Update, Delete) and search on GeoNode resources.</p>
+<hr />
+<p>If you wish to sponsor geonode4R, do not hesitate to <a href="mailto:eblondel.pro@gmail.com">contact me</a></p>
+<p>Many thanks to the following organizations that have provided fundings for developing the <code>geonode4R</code> package:</p>
+<p><a href="https://en.ird.fr/"><img src="https://en.ird.fr/sites/ird_fr/files/2019-08/logo_IRD_2016_BLOC_UK_COUL.png" height=100 width=100/></a></p>
+<hr />
+<p><strong>Table of contents</strong></p>
+<p><a href="#package_overview"><strong>1. Overview</strong></a><br/>
+<a href="#package_status"><strong>2. Package status</strong></a><br/>
+<a href="#package_credits"><strong>3. Credits</strong></a><br/>
+<a href="#user_guide"><strong>4. User guide</strong></a><br/>
+   <a href="#install_guide">4.1 Installation</a><br/>
+   <a href="#GeoNodeManager">4.2 Connect to GeoNode REST API</a><br/>
+   <a href="#GeoNodeManager-create">4.3 Create a resource</a><br/>
+   <a href="#GeoNodeManager-read">4.4 Read a resource</a><br/>
+   <a href="#GeoNodeManager-delete">4.5 Delete a resource</a><br/>
+<a href="#package_issues"><strong>5. Issue reporting</strong></a><br/></p>
+<a name="package_overview"/>
+<h3 id="1-overview-and-vision">1. Overview and vision</h3>
+<hr />
+<p>Until now, equivalent tools were existing for other programming languages (e.g. Java, Python) but not in R. <a href="https://github.com/eblondel/geonode4R">geonode4R</a> intends to provide R native interface to the GeoNode REST API, in order to facilitate publication of geographic data resources from R to <a href="https://geonode.org/">GeoNode</a>.</p>
+<a name="package_status"/>
+<h3 id="2-development-status">2. Development status</h3>
+<hr />
+<p>A first version is being published to CRAN.</p>
+<p>The package is at its early stage. It aims to be consolidated together with improvements made on the GeoNode API, and based on feedback of the user community.</p>
+<a name="package_credits"/>
+<h3 id="3-credits">3. Credits</h3>
+<hr />
+<p>© 2022, Emmanuel Blondel</p>
+<p>Package distributed under MIT license.</p>
+<p>If you use <code>geonode4R</code>, i would be very grateful if you can add a citation in your published work. By citing <code>geonode4R</code>, beyond acknowledging the work, you contribute to make it more visible and guarantee its growing and sustainability. You can get the preferred citation by running <code>citation(&quot;geonode4R)</code> in R.</p>
+<p>You can reference <code>geonode4R</code> through its DOI: <a href="https://doi.org/10.5281/zenodo.7703117"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7703117.svg" alt="DOI" /></a></p>
+<a name="user_guide"/>
+<h3 id="4-user-guide">4. User guide</h3>
+<hr />
+<a name="install_guide"/>
+<h4 id="4-1-how-to-install-geonode4r-in-r">4.1 How to install geonode4R in R</h4>
+<p>For now, the package can be installed from Github</p>
+<pre><code class="language-R">install.packages(&quot;remotes&quot;)
+</code></pre>
+<p>Once the devtools package loaded, you can use the install_github to install <code>geonode4R</code> By default, package will be installed from <code>master</code> which is the current version in development (likely to be unstable).</p>
+<pre><code class="language-R">remotes::install_github(&quot;eblondel/geonode4R&quot;)
+</code></pre>
+<a name="GeoNodeManager"/>
+<h4 id="4-2-connect-to-geonode-rest-api">4.2 Connect to GeoNode REST API</h4>
+<p>The main entry point of <code>geosapi</code> is the `GeoNodeManager<code>. To configure it, enter the following line, specifying the base </code>URL`` of your GeoNode, and your credentials:</p>
+<pre><code class="language-R">geonode &lt;- GeoNodeManager$new(
+    url = &quot;http://localhost:8080/geonode&quot;, #baseUrl of the Geoserver
+    user = &quot;admin&quot;, pwd = &quot;password&quot;, #credentials
+    logger = NULL #logger, for info or debugging purpose
+)
+</code></pre>
+<p>By default, the <code>geonode4R</code> <strong>logger</strong> is deactivated. To enable the logger, specify the level of log you wish as parameter of the above R code. Two logging levels are available:</p>
+<ul>
+<li><code>INFO</code>: will print the <code>geonode4R</code> logs. Three types of messages can be distinguished: <code>INFO</code>, <code>WARN</code>, <code>ERROR</code>. The latter is generally associated with a <code>stop</code> and indicate an blocking error for the R method executed.</li>
+<li><code>DEBUG</code> will print the above <code>geonode4R</code> logs, and report all logs from HTTP requests performed with <code>cURL</code></li>
+</ul>
+<p>The <code>GeoNodeManager</code> inherits all methods of resource dependent managers, to provide the users with a single R interface to GeoNode REST API operations.</p>
+<a name="GeoNodeManager-create"/>
+<h4 id="4-3-create-a-resource">4.3 Create a resource</h4>
+<p>To upload a shapefile or another resource, list the resource files (e.g. a list of ESRI Shapefiles), and use the <code>upload</code> method of the <code>GeoNodeManager</code>.</p>
+<pre><code class="language-R">files = list.files(system.file(&quot;extdata/samples&quot;, package = &quot;geonode4R&quot;), pattern = &quot;shapefile1&quot;, full.names = T)
+files = files[!endsWith(files, &quot;.zip&quot;)]
+created = GEONODE$upload(files)
+</code></pre>
+<a name="GeoNodeManager-read"/>
+<h4 id="4-4-read-a-resource">4.4 Read a resource</h4>
+<p>To get a resource, you can get it based on a dataset identifier (‘pk’), or get it by UUID or alternate dataset. The below examples show how to perform these tasks.</p>
+<pre><code class="language-R">#getResource
+resource = GEONODE$getResource(created$dataset)
+
+#getResourceByUUID
+resource_by_uuid = GEONODE$getResourceByUUID(resource$uuid)
+
+#getResourceByAlternate
+resource_by_alternate = GEONODE$getResourceByAlternate(&quot;shapefile1&quot;)
+</code></pre>
+<a name="GeoNodeManager-delete"/>
+<h4 id="4-5-delete-a-resource">4.5 Delete a resource</h4>
+<p>To delete a resource, use the <code>deleteResource</code> method of the <code>GeoNodeManager</code>:</p>
+<pre><code class="language-R">deleted = GEONODE$deleteResource(created$dataset)
+</code></pre>
+<a name="package_issues"/>
+<h3 id="5-issue-reporting">5. Issue reporting</h3>
+<hr />
+<p>Issues can be reported at <a href="https://github.com/eblondel/geonode4R/issues">https://github.com/eblondel/geonode4R/issues</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+</body>
+</html>
